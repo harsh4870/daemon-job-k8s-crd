@@ -1,0 +1,7 @@
+resources:
+- daemonjob-controller.yaml
+configMapGenerator:
+- name: daemonjob-controller-node
+  namespace: metacontroller
+  files:
+  - src/server.js

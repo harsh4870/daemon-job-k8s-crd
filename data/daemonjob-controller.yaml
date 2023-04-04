@@ -1,0 +1,55 @@
+---
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: daemonjob-controller-node
+spec:
+  generateSelector: true
+  parentResource:
+    apiVersion: ctl.example.com/v1
+    resource: daemonjobs
+  childResources:
+    - apiVersion: apps/v1
+      resource: daemonsets
+  hooks:
+    sync:
+      webhook:
+        url: http://daemonjob-controller-node.metacontroller/sync
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daemonjob-controller-node
+  namespace: metacontroller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daemonjob-controller-node
+  template:
+    metadata:
+      labels:
+        app: daemonjob-controller-node
+    spec:
+      containers:
+      - name: controller
+        image: node:8
+        command: ["node", "/hooks/server.js"]
+        volumeMounts:
+        - name: hooks
+          mountPath: /hooks
+      volumes:
+      - name: hooks
+        configMap:
+          name: daemonjob-controller-node
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: daemonjob-controller-node
+  namespace: metacontroller
+spec:
+  selector:
+    app: daemonjob-controller-node
+  ports:
+  - port: 80
