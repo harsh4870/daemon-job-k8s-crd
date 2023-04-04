@@ -13,6 +13,10 @@ Apply CRD & Controller Deployment
 
 `kubectl apply -k manifest/`
 
+Apply the DaemonJob
+
+`kubectl apply -f daemon-job.yaml`
+
 Controller Code available at 
 
 `data/src/`
