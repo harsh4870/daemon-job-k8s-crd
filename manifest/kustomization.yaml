@@ -1,0 +1,4 @@
+bases:
+- ../data
+resources:
+- crdv1.yaml
