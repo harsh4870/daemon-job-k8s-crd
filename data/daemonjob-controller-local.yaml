@@ -16,3 +16,42 @@ spec:
       webhook:
         url: http://192.168.1.3/sync
         #Replace with Local IP for Webhook
+---
+#Extra deployment for Ref to mount file as configmap instead build
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daemonjob-controller-node
+  namespace: metacontroller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daemonjob-controller-node
+  template:
+    metadata:
+      labels:
+        app: daemonjob-controller-node
+    spec:
+      containers:
+      - name: controller
+        image: node:8
+        command: ["node", "/hooks/server.js"]
+        volumeMounts:
+        - name: hooks
+          mountPath: /hooks
+      volumes:
+      - name: hooks
+        configMap:
+          name: daemonjob-controller-node
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: daemonjob-controller-node
+  namespace: metacontroller
+spec:
+  selector:
+    app: daemonjob-controller-node
+  ports:
+  - port: 80

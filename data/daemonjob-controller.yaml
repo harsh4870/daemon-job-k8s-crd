@@ -33,15 +33,9 @@ spec:
     spec:
       containers:
       - name: controller
-        image: node:8
-        command: ["node", "/hooks/server.js"]
-        volumeMounts:
-        - name: hooks
-          mountPath: /hooks
-      volumes:
-      - name: hooks
-        configMap:
-          name: daemonjob-controller-node
+        image: harshmanvar/express-node
+        ports:
+        - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
